@@ -523,20 +523,53 @@
             const smallCanvas = document.getElementById('smallPromoCanvas');
             const marqueeCanvas = document.getElementById('marqueePromoCanvas');
             
-            // Download small promo tile
-            downloadCanvasAsImage(smallCanvas, 'mermaid-visualizer-small-promo-440x280.png');
+            // Ensure canvases have content before enabling downloads
+            if (!smallCanvas || !marqueeCanvas) {
+                console.error('Canvas elements not found');
+                return;
+            }
             
-            // Download marquee promo tile
-            downloadCanvasAsImage(marqueeCanvas, 'mermaid-visualizer-marquee-promo-1400x560.png');
-            
-            // Show download links
+            // Show download links (remove auto-download to avoid issues)
             const downloadsDiv = document.getElementById('promoDownloads');
             downloadsDiv.innerHTML = `
-                <a href="#" class="download-link ready" onclick="downloadCanvasAsImage(document.getElementById('smallPromoCanvas'), 'mermaid-visualizer-small-promo-440x280.png')">📥 Small Promo Tile PNG</a>
-                <a href="#" class="download-link ready" onclick="downloadCanvasAsImage(document.getElementById('marqueePromoCanvas'), 'mermaid-visualizer-marquee-promo-1400x560.png')">📥 Marquee Promo Tile PNG</a>
-                <a href="#" class="download-link ready" onclick="downloadCanvasAsImage(document.getElementById('smallPromoCanvas'), 'mermaid-visualizer-small-promo-440x280.jpg', 'image/jpeg')">📥 Small Promo Tile JPG</a>
-                <a href="#" class="download-link ready" onclick="downloadCanvasAsImage(document.getElementById('marqueePromoCanvas'), 'mermaid-visualizer-marquee-promo-1400x560.jpg', 'image/jpeg')">📥 Marquee Promo Tile JPG</a>
+                <a href="#" class="download-link ready" onclick="downloadPromoTile('small')">📥 Small Promo Tile PNG</a>
+                <a href="#" class="download-link ready" onclick="downloadPromoTile('marquee')">📥 Marquee Promo Tile PNG</a>
+                <a href="#" class="download-link ready" onclick="downloadPromoTile('small', 'jpg')">📥 Small Promo Tile JPG</a>
+                <a href="#" class="download-link ready" onclick="downloadPromoTile('marquee', 'jpg')">📥 Marquee Promo Tile JPG</a>
             `;
+        }
+
+        // Helper function for downloading promo tiles with better error handling
+        function downloadPromoTile(type, format = 'png') {
+            const canvasId = type === 'small' ? 'smallPromoCanvas' : 'marqueePromoCanvas';
+            const canvas = document.getElementById(canvasId);
+            
+            if (!canvas) {
+                alert('Canvas not found. Please regenerate the promotional materials first.');
+                return;
+            }
+            
+            // Check if canvas has content
+            const ctx = canvas.getContext('2d');
+            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const hasContent = imageData.data.some(pixel => pixel !== 0);
+            
+            if (!hasContent) {
+                alert('Canvas appears to be empty. Please regenerate the promotional materials first.');
+                return;
+            }
+            
+            const mimeType = format === 'jpg' ? 'image/jpeg' : 'image/png';
+            const filename = type === 'small' 
+                ? `mermaid-visualizer-small-promo-440x280.${format}`
+                : `mermaid-visualizer-marquee-promo-1400x560.${format}`;
+            
+            try {
+                downloadCanvasAsImage(canvas, filename, mimeType);
+            } catch (error) {
+                console.error('Download failed:', error);
+                alert('Download failed. Please try again.');
+            }
         }
 
         // Screenshot processing
