@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mermaid Visualizer - Promotional Materials Generator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 2.5rem;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .section {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .section h2 {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            color: #ff3670;
+        }
+
+        .canvas-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .canvas-wrapper {
+            text-align: center;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            padding: 15px;
+        }
+
+        .canvas-wrapper h3 {
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+        }
+
+        canvas {
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            max-width: 100%;
+            height: auto;
+        }
+
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #ff3670, #ff6b9d);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 54, 112, 0.4);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 54, 112, 0.6);
+        }
+
+        .upload-area {
+            border: 2px dashed rgba(255, 255, 255, 0.5);
+            border-radius: 12px;
+            padding: 40px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 20px 0;
+        }
+
+        .upload-area:hover {
+            border-color: #ff3670;
+            background: rgba(255, 54, 112, 0.1);
+        }
+
+        .upload-area.dragover {
+            border-color: #ff3670;
+            background: rgba(255, 54, 112, 0.2);
+        }
+
+        #fileInput {
+            display: none;
+        }
+
+        .animation-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        #animationCanvas {
+            background: #1a1a1a;
+            border-radius: 12px;
+        }
+
+        .animation-controls {
+            margin-top: 15px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 3px;
+            margin: 10px 0;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ff3670, #ff6b9d);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .download-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .download-link {
+            display: none;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: background 0.3s ease;
+        }
+
+        .download-link:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .download-link.ready {
+            display: inline-block;
+        }
+
+        .screenshot-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .screenshot-item {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .screenshot-item img {
+            max-width: 100%;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+
+        .specs {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .section {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧜‍♀️ Mermaid Visualizer - Promotional Materials</h1>
+
+        <!-- Chrome Web Store Promotional Tiles -->
+        <div class="section">
+            <h2>🏪 Chrome Web Store Promotional Tiles</h2>
+            <div class="specs">
+                <strong>Requirements:</strong><br>
+                • Small Promo Tile: 440×280px<br>
+                • Marquee Promo Tile: 1400×560px<br>
+                • Format: JPEG or 24-bit PNG (no alpha)<br>
+                • High quality, eye-catching design
+            </div>
+            
+            <div class="canvas-container">
+                <div class="canvas-wrapper">
+                    <h3>Small Promo Tile (440×280)</h3>
+                    <canvas id="smallPromoCanvas" width="440" height="280"></canvas>
+                </div>
+                
+                <div class="canvas-wrapper">
+                    <h3>Marquee Promo Tile (1400×560)</h3>
+                    <canvas id="marqueePromoCanvas" width="700" height="280" style="width: 700px; height: 280px;"></canvas>
+                </div>
+            </div>
+            
+            <div class="controls">
+                <button class="btn" onclick="generatePromoTiles()">🎨 Generate Promo Tiles</button>
+                <button class="btn" onclick="downloadPromoTiles()">📥 Download All Tiles</button>
+            </div>
+            
+            <div class="download-links" id="promoDownloads"></div>
+        </div>
+
+        <!-- Screenshot Processor -->
+        <div class="section">
+            <h2>📸 Screenshot Processor</h2>
+            <div class="specs">
+                <strong>Requirements:</strong><br>
+                • Size: 1280×800px or 640×400px<br>
+                • Format: JPEG or 24-bit PNG (no alpha)<br>
+                • High quality, clear demonstration of features
+            </div>
+            
+            <div class="upload-area" onclick="document.getElementById('fileInput').click()">
+                <p>📁 Click to upload screenshots or drag & drop here</p>
+                <p style="font-size: 0.9rem; opacity: 0.7;">Supports: PNG, JPG, JPEG</p>
+            </div>
+            <input type="file" id="fileInput" multiple accept="image/*">
+            
+            <div class="screenshot-grid" id="screenshotGrid"></div>
+            
+            <div class="download-links" id="screenshotDownloads"></div>
+        </div>
+
+        <!-- Animation Generator -->
+        <div class="section">
+            <h2>🎬 Promotional Animation</h2>
+            <div class="specs">
+                <strong>Animation Sequence:</strong><br>
+                1. Cool intro text with Mermaid Visualizer branding<br>
+                2. Show webpage with Mermaid diagram code<br>
+                3. Zoom to browser extension toolbar<br>
+                4. Click on extension icon<br>
+                5. Beautiful diagram appears<br>
+                6. Show features (zoom, pan, navigation)<br>
+                7. End with call-to-action
+            </div>
+            
+            <div class="animation-container">
+                <canvas id="animationCanvas" width="1280" height="720"></canvas>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="animationProgress"></div>
+                </div>
+                <div class="animation-controls">
+                    <button class="btn" onclick="generateAnimation()">🎬 Generate Animation</button>
+                    <button class="btn" onclick="playAnimation()">▶️ Play</button>
+                    <button class="btn" onclick="pauseAnimation()">⏸️ Pause</button>
+                    <button class="btn" onclick="exportAnimationFrames()">📥 Export Frames</button>
+                </div>
+            </div>
+            
+            <div class="download-links" id="animationDownloads"></div>
+        </div>
+
+        <!-- Favicon Generator -->
+        <div class="section">
+            <h2>🔗 Favicon Generator</h2>
+            <div class="specs">
+                <strong>Favicon Requirements:</strong><br>
+                • Multiple sizes: 16×16, 32×32, 48×48, 64×64px<br>
+                • ICO format for maximum compatibility<br>
+                • Clean, recognizable at small sizes
+            </div>
+            
+            <div class="canvas-container">
+                <div class="canvas-wrapper">
+                    <h3>Favicon Preview</h3>
+                    <canvas id="faviconCanvas" width="64" height="64"></canvas>
+                </div>
+            </div>
+            
+            <div class="controls">
+                <button class="btn" onclick="generateFavicon()">🎨 Generate Favicon</button>
+                <button class="btn" onclick="downloadFavicon()">📥 Download ICO</button>
+            </div>
+            
+            <div class="download-links" id="faviconDownloads"></div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let animationId = null;
+        let currentFrame = 0;
+        let isAnimating = false;
+
+        // Generate promotional tiles
+        function generatePromoTiles() {
+            generateSmallPromo();
+            generateMarqueePromo();
+        }
+
+        function generateSmallPromo() {
+            const canvas = document.getElementById('smallPromoCanvas');
+            const ctx = canvas.getContext('2d');
+            
+            // Background gradient
+            const gradient = ctx.createLinearGradient(0, 0, 440, 280);
+            gradient.addColorStop(0, '#667eea');
+            gradient.addColorStop(0.5, '#764ba2');
+            gradient.addColorStop(1, '#ff3670');
+            
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, 440, 280);
+            
+            // Icon placeholder (will be replaced with actual icon)
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(30, 30, 80, 80);
+            ctx.fillStyle = '#ff3670';
+            ctx.fillRect(40, 40, 60, 60);
+            
+            // Title
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 32px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif';
+            ctx.fillText('Mermaid', 130, 60);
+            ctx.fillText('Visualizer', 130, 95);
+            
+            // Subtitle
+            ctx.font = '16px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif';
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+            ctx.fillText('Transform diagrams with one click', 30, 140);
+            
+            // Features
+            const features = ['✨ Works on GitHub, Jira, Confluence', '🎨 Beautiful SVG rendering', '🔗 Mermaid.live integration'];
+            ctx.font = '14px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif';
+            features.forEach((feature, i) => {
+                ctx.fillText(feature, 30, 170 + i * 25);
+            });
+            
+            // CTA
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(280, 200, 140, 40);
+            ctx.fillStyle = '#ff3670';
+            ctx.font = 'bold 16px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('Add to Chrome', 350, 225);
+            ctx.textAlign = 'left';
+        }
+
+        function generateMarqueePromo() {
+            const canvas = document.getElementById('marqueePromoCanvas');
+            canvas.width = 1400;
+            canvas.height = 560;
+            const ctx = canvas.getContext('2d');
+            
+            // Background gradient
+            const gradient = ctx.createLinearGradient(0, 0, 1400, 560);
+            gradient.addColorStop(0, '#667eea');
+            gradient.addColorStop(0.3, '#764ba2');
+            gradient.addColorStop(0.7, '#ff3670');
+            gradient.addColorStop(1, '#ff6b9d');
+            
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, 1400, 560);
+            
+            // Large icon
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(50, 50, 200, 200);
+            ctx.fillStyle = '#ff3670';
+            ctx.fillRect(70, 70, 160, 160);
+            
+            // Main title
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 72px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif';
+            ctx.fillText('Mermaid Visualizer', 300, 120);
+            
+            // Subtitle
+            ctx.font = '36px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif';
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+            ctx.fillText('Transform Code into Beautiful Diagrams', 300, 180);
+            
+            // Features
+            const features = [
+                '⚡ One-click visualization on any webpage',
+                '🌐 Works with GitHub, Confluence, Jira, GitLab',
+                '🎨 Beautiful SVG rendering with zoom & pan',
+                '🔗 Direct integration with mermaid.live',
+                '📱 Mobile-friendly with pinch-to-zoom',
+                '🔒 Privacy-first - all processing happens locally'
+            ];
+            
+            ctx.font = '24px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif';
+            features.forEach((feature, i) => {
+                const x = (i % 2) * 600 + 300;
+                const y = 250 + Math.floor(i / 2) * 40;
+                ctx.fillText(feature, x, y);
+            });
+            
+            // CTA
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(300, 450, 300, 80);
+            ctx.fillStyle = '#ff3670';
+            ctx.font = 'bold 32px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('Add to Chrome', 450, 500);
+            ctx.textAlign = 'left';
+            
+            // Version for display (scale down)
+            const displayCanvas = document.getElementById('marqueePromoCanvas');
+            displayCanvas.style.width = '700px';
+            displayCanvas.style.height = '280px';
+        }
+
+        // Download promotional tiles
+        function downloadPromoTiles() {
+            const smallCanvas = document.getElementById('smallPromoCanvas');
+            const marqueeCanvas = document.getElementById('marqueePromoCanvas');
+            
+            // Download small promo tile
+            downloadCanvasAsImage(smallCanvas, 'mermaid-visualizer-small-promo-440x280.png');
+            
+            // Download marquee promo tile
+            downloadCanvasAsImage(marqueeCanvas, 'mermaid-visualizer-marquee-promo-1400x560.png');
+            
+            // Show download links
+            const downloadsDiv = document.getElementById('promoDownloads');
+            downloadsDiv.innerHTML = `
+                <a href="#" class="download-link ready" onclick="downloadCanvasAsImage(document.getElementById('smallPromoCanvas'), 'mermaid-visualizer-small-promo-440x280.png')">📥 Small Promo Tile PNG</a>
+                <a href="#" class="download-link ready" onclick="downloadCanvasAsImage(document.getElementById('marqueePromoCanvas'), 'mermaid-visualizer-marquee-promo-1400x560.png')">📥 Marquee Promo Tile PNG</a>
+                <a href="#" class="download-link ready" onclick="downloadCanvasAsImage(document.getElementById('smallPromoCanvas'), 'mermaid-visualizer-small-promo-440x280.jpg', 'image/jpeg')">📥 Small Promo Tile JPG</a>
+                <a href="#" class="download-link ready" onclick="downloadCanvasAsImage(document.getElementById('marqueePromoCanvas'), 'mermaid-visualizer-marquee-promo-1400x560.jpg', 'image/jpeg')">📥 Marquee Promo Tile JPG</a>
+            `;
+        }
+
+        // Screenshot processing
+        document.getElementById('fileInput').addEventListener('change', handleScreenshots);
+
+        function handleScreenshots(event) {
+            const files = event.target.files;
+            processScreenshots(files);
+        }
+
+        function processScreenshots(files) {
+            const grid = document.getElementById('screenshotGrid');
+            grid.innerHTML = '';
+            
+            Array.from(files).forEach((file, index) => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = new Image();
+                    img.onload = function() {
+                        createScreenshotCanvas(img, file.name, index);
+                    };
+                    img.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        function createScreenshotCanvas(img, filename, index) {
+            const container = document.createElement('div');
+            container.className = 'screenshot-item';
+            
+            // Create canvas for 1280x800
+            const canvas1280 = document.createElement('canvas');
+            canvas1280.width = 1280;
+            canvas1280.height = 800;
+            const ctx1280 = canvas1280.getContext('2d');
+            
+            // Calculate scaling
+            const scale = Math.min(1280 / img.width, 800 / img.height);
+            const newWidth = img.width * scale;
+            const newHeight = img.height * scale;
+            const x = (1280 - newWidth) / 2;
+            const y = (800 - newHeight) / 2;
+            
+            // Fill background
+            ctx1280.fillStyle = '#ffffff';
+            ctx1280.fillRect(0, 0, 1280, 800);
+            
+            // Draw image
+            ctx1280.drawImage(img, x, y, newWidth, newHeight);
+            
+            // Create canvas for 640x400
+            const canvas640 = document.createElement('canvas');
+            canvas640.width = 640;
+            canvas640.height = 400;
+            const ctx640 = canvas640.getContext('2d');
+            
+            // Scale for 640x400
+            const scale640 = Math.min(640 / img.width, 400 / img.height);
+            const newWidth640 = img.width * scale640;
+            const newHeight640 = img.height * scale640;
+            const x640 = (640 - newWidth640) / 2;
+            const y640 = (400 - newHeight640) / 2;
+            
+            // Fill background
+            ctx640.fillStyle = '#ffffff';
+            ctx640.fillRect(0, 0, 640, 400);
+            
+            // Draw image
+            ctx640.drawImage(img, x640, y640, newWidth640, newHeight640);
+            
+            // Preview (scaled down)
+            const preview = document.createElement('canvas');
+            preview.width = 320;
+            preview.height = 200;
+            preview.style.maxWidth = '100%';
+            const previewCtx = preview.getContext('2d');
+            previewCtx.drawImage(canvas1280, 0, 0, 320, 200);
+            
+            container.innerHTML = `
+                <h4>Screenshot ${index + 1}</h4>
+                <div style="margin: 10px 0;">
+                    <button class="btn" onclick="downloadCanvasAsImage(this.parentNode.parentNode.canvas1280, 'screenshot-${index + 1}-1280x800.png')">📥 1280×800 PNG</button>
+                    <button class="btn" onclick="downloadCanvasAsImage(this.parentNode.parentNode.canvas640, 'screenshot-${index + 1}-640x400.png')">📥 640×400 PNG</button>
+                    <button class="btn" onclick="downloadCanvasAsImage(this.parentNode.parentNode.canvas1280, 'screenshot-${index + 1}-1280x800.jpg', 'image/jpeg')">📥 1280×800 JPG</button>
+                    <button class="btn" onclick="downloadCanvasAsImage(this.parentNode.parentNode.canvas640, 'screenshot-${index + 1}-640x400.jpg', 'image/jpeg')">📥 640×400 JPG</button>
+                </div>
+            `;
+            
+            container.appendChild(preview);
+            container.canvas1280 = canvas1280;
+            container.canvas640 = canvas640;
+            
+            document.getElementById('screenshotGrid').appendChild(container);
+        }
+
+        // Animation generation
+        function generateAnimation() {
+            const canvas = document.getElementById('animationCanvas');
+            const ctx = canvas.getContext('2d');
+            
+            // Clear canvas
+            ctx.fillStyle = '#1a1a1a';
+            ctx.fillRect(0, 0, 1280, 720);
+            
+            // Add intro text
+            ctx.fillStyle = '#ff3670';
+            ctx.font = 'bold 48px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('🧜‍♀️ Mermaid Visualizer', 640, 300);
+            
+            ctx.fillStyle = '#ffffff';
+            ctx.font = '24px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif';
+            ctx.fillText('Transform code into beautiful diagrams', 640, 350);
+            ctx.fillText('with just one click!', 640, 390);
+            
+            ctx.textAlign = 'left';
+        }
+
+        function playAnimation() {
+            if (!isAnimating) {
+                isAnimating = true;
+                animateSequence();
+            }
+        }
+
+        function pauseAnimation() {
+            isAnimating = false;
+            if (animationId) {
+                cancelAnimationFrame(animationId);
+            }
+        }
+
+        function animateSequence() {
+            if (!isAnimating) return;
+            
+            const canvas = document.getElementById('animationCanvas');
+            const ctx = canvas.getContext('2d');
+            const progress = document.getElementById('animationProgress');
+            
+            // Update progress
+            const totalFrames = 300; // 10 seconds at 30fps
+            const progressPercent = (currentFrame / totalFrames) * 100;
+            progress.style.width = progressPercent + '%';
+            
+            // Clear canvas
+            ctx.fillStyle = '#1a1a1a';
+            ctx.fillRect(0, 0, 1280, 720);
+            
+            // Animation sequence based on current frame
+            if (currentFrame < 60) {
+                // Intro sequence
+                drawIntroFrame(ctx, currentFrame);
+            } else if (currentFrame < 120) {
+                // Show webpage
+                drawWebpageFrame(ctx, currentFrame - 60);
+            } else if (currentFrame < 180) {
+                // Show extension icon
+                drawExtensionFrame(ctx, currentFrame - 120);
+            } else if (currentFrame < 240) {
+                // Show diagram appearing
+                drawDiagramFrame(ctx, currentFrame - 180);
+            } else {
+                // End sequence
+                drawEndFrame(ctx, currentFrame - 240);
+            }
+            
+            currentFrame++;
+            if (currentFrame >= totalFrames) {
+                currentFrame = 0; // Loop
+            }
+            
+            animationId = requestAnimationFrame(animateSequence);
+        }
+
+        function drawIntroFrame(ctx, frame) {
+            const alpha = Math.sin((frame / 60) * Math.PI);
+            
+            ctx.fillStyle = `rgba(255, 54, 112, ${alpha})`;
+            ctx.font = 'bold 48px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('🧜‍♀️ Mermaid Visualizer', 640, 300);
+            
+            ctx.fillStyle = `rgba(255, 255, 255, ${alpha * 0.8})`;
+            ctx.font = '24px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif';
+            ctx.fillText('Transform diagrams with one click', 640, 350);
+        }
+
+        function drawWebpageFrame(ctx, frame) {
+            // Simulate browser window
+            ctx.fillStyle = '#f5f5f5';
+            ctx.fillRect(100, 100, 1080, 520);
+            
+            // Browser chrome
+            ctx.fillStyle = '#e0e0e0';
+            ctx.fillRect(100, 100, 1080, 40);
+            
+            // Address bar
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(200, 110, 800, 20);
+            
+            ctx.fillStyle = '#666666';
+            ctx.font = '12px monospace';
+            ctx.textAlign = 'left';
+            ctx.fillText('https://github.com/user/project/README.md', 210, 125);
+            
+            // Mermaid code
+            ctx.fillStyle = '#24292e';
+            ctx.font = '14px monospace';
+            const code = [
+                '```mermaid',
+                'graph TD',
+                '    A[Start] --> B{Decision}',
+                '    B -->|Yes| C[Process]',
+                '    B -->|No| D[End]',
+                '    C --> D',
+                '```'
+            ];
+            
+            code.forEach((line, i) => {
+                ctx.fillText(line, 120, 180 + i * 20);
+            });
+        }
+
+        function drawExtensionFrame(ctx, frame) {
+            // Previous frame content
+            drawWebpageFrame(ctx, 60);
+            
+            // Highlight extension icon area
+            const pulse = Math.sin((frame / 30) * Math.PI * 2) * 0.3 + 0.7;
+            ctx.fillStyle = `rgba(255, 54, 112, ${pulse})`;
+            ctx.fillRect(1000, 50, 40, 40);
+            
+            // Extension icon
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(1005, 55, 30, 30);
+            ctx.fillStyle = '#ff3670';
+            ctx.fillRect(1010, 60, 20, 20);
+        }
+
+        function drawDiagramFrame(ctx, frame) {
+            // Show beautiful rendered diagram
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(200, 150, 880, 400);
+            
+            // Diagram title
+            ctx.fillStyle = '#24292e';
+            ctx.font = 'bold 20px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('Beautiful Mermaid Diagram', 640, 180);
+            
+            // Animated diagram nodes
+            const nodes = [
+                { x: 300, y: 250, text: 'Start' },
+                { x: 640, y: 250, text: 'Decision' },
+                { x: 500, y: 350, text: 'Process' },
+                { x: 780, y: 350, text: 'End' }
+            ];
+            
+            nodes.forEach((node, i) => {
+                if (frame > i * 15) {
+                    // Node background
+                    ctx.fillStyle = '#ff3670';
+                    ctx.fillRect(node.x - 50, node.y - 20, 100, 40);
+                    
+                    // Node text
+                    ctx.fillStyle = '#ffffff';
+                    ctx.font = '16px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif';
+                    ctx.textAlign = 'center';
+                    ctx.fillText(node.text, node.x, node.y + 5);
+                }
+            });
+            
+            // Animated connections
+            if (frame > 30) {
+                ctx.strokeStyle = '#ff3670';
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                ctx.moveTo(350, 250);
+                ctx.lineTo(590, 250);
+                ctx.stroke();
+                
+                ctx.beginPath();
+                ctx.moveTo(615, 270);
+                ctx.lineTo(525, 330);
+                ctx.stroke();
+                
+                ctx.beginPath();
+                ctx.moveTo(665, 270);
+                ctx.lineTo(755, 330);
+                ctx.stroke();
+            }
+        }
+
+        function drawEndFrame(ctx, frame) {
+            const alpha = Math.sin((frame / 60) * Math.PI);
+            
+            ctx.fillStyle = `rgba(255, 54, 112, ${alpha})`;
+            ctx.font = 'bold 36px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('Get Mermaid Visualizer Today!', 640, 300);
+            
+            ctx.fillStyle = `rgba(255, 255, 255, ${alpha * 0.8})`;
+            ctx.font = '20px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif';
+            ctx.fillText('Available on Chrome Web Store', 640, 350);
+        }
+
+        function exportAnimationFrames() {
+            // Export key frames
+            const canvas = document.getElementById('animationCanvas');
+            const originalFrame = currentFrame;
+            
+            const keyFrames = [0, 60, 120, 180, 240];
+            keyFrames.forEach((frame, i) => {
+                currentFrame = frame;
+                animateSequence();
+                downloadCanvasAsImage(canvas, `animation-frame-${i + 1}.png`);
+            });
+            
+            currentFrame = originalFrame;
+        }
+
+        // Favicon generation
+        function generateFavicon() {
+            const canvas = document.getElementById('faviconCanvas');
+            const ctx = canvas.getContext('2d');
+            
+            // Background
+            ctx.fillStyle = '#ff3670';
+            ctx.fillRect(0, 0, 64, 64);
+            
+            // Simple icon design
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(8, 8, 48, 48);
+            
+            ctx.fillStyle = '#ff3670';
+            ctx.fillRect(16, 16, 32, 32);
+            
+            // Add some detail
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(20, 20, 8, 8);
+            ctx.fillRect(36, 20, 8, 8);
+            ctx.fillRect(20, 36, 24, 8);
+        }
+
+        function downloadFavicon() {
+            const canvas = document.getElementById('faviconCanvas');
+            downloadCanvasAsImage(canvas, 'favicon.png');
+            
+            // Show download link
+            const downloadsDiv = document.getElementById('faviconDownloads');
+            downloadsDiv.innerHTML = `
+                <a href="#" class="download-link ready" onclick="downloadCanvasAsImage(document.getElementById('faviconCanvas'), 'favicon.png')">📥 Favicon PNG</a>
+            `;
+        }
+
+        // Utility function to download canvas as image
+        function downloadCanvasAsImage(canvas, filename, mimeType = 'image/png') {
+            const link = document.createElement('a');
+            link.download = filename;
+            
+            if (mimeType === 'image/jpeg') {
+                // For JPEG, create a new canvas with white background
+                const tempCanvas = document.createElement('canvas');
+                tempCanvas.width = canvas.width;
+                tempCanvas.height = canvas.height;
+                const tempCtx = tempCanvas.getContext('2d');
+                
+                // Fill with white background
+                tempCtx.fillStyle = '#ffffff';
+                tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+                
+                // Draw original canvas
+                tempCtx.drawImage(canvas, 0, 0);
+                
+                link.href = tempCanvas.toDataURL(mimeType, 0.95);
+            } else {
+                link.href = canvas.toDataURL(mimeType);
+            }
+            
+            link.click();
+        }
+
+        // Drag and drop functionality
+        const uploadArea = document.querySelector('.upload-area');
+
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            processScreenshots(files);
+        });
+
+        // Initialize
+        generatePromoTiles();
+        generateFavicon();
+    </script>
+</body>
+</html>

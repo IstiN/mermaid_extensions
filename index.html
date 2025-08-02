@@ -5,7 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mermaid Visualizer - Browser Extension</title>
     <meta name="description" content="Convert Mermaid diagram code to visual diagrams on any webpage. Works with GitHub, Confluence, Jira, and more.">
-    <link rel="icon" type="image/png" href="shared/icon.svg">
+    <link rel="icon" type="image/svg+xml" href="shared/icon.svg">
+    <link rel="icon" type="image/png" sizes="32x32" href="chrome/icons/icon-48.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="chrome/icons/icon-16.png">
+    <link rel="apple-touch-icon" href="chrome/icons/icon-128.png">
     
     <style>
         * {
@@ -282,10 +285,62 @@
         .demo-placeholder {
             background: rgba(0, 0, 0, 0.2);
             border-radius: 12px;
-            padding: 60px 20px;
+            padding: 30px 20px;
             color: rgba(255, 255, 255, 0.7);
             font-size: 1.1rem;
             border: 2px dashed rgba(255, 255, 255, 0.3);
+            margin-top: 30px;
+        }
+
+        .screenshots-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+            margin-bottom: 30px;
+            max-width: 1000px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .screenshot-item {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .screenshot-item:hover {
+            transform: translateY(-5px);
+        }
+
+        .screenshot-item img {
+            width: 100%;
+            height: auto;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .screenshot-item:hover img {
+            transform: scale(1.02);
+        }
+
+        .screenshot-caption {
+            margin-top: 15px;
+        }
+
+        .screenshot-caption h4 {
+            color: white;
+            font-size: 1.3rem;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .screenshot-caption p {
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.5;
         }
 
         @media (max-width: 768px) {
@@ -308,6 +363,15 @@
             .download-buttons {
                 flex-direction: column;
                 align-items: center;
+            }
+
+            .screenshots-gallery {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .screenshot-item {
+                padding: 15px;
             }
         }
     </style>
@@ -408,9 +472,24 @@
 
             <section class="demo-video">
                 <h2>See It In Action</h2>
+                <div class="screenshots-gallery">
+                    <div class="screenshot-item">
+                        <img src="screenshots/Screenshot1.png" alt="Extension detecting Mermaid diagrams on GitHub" loading="lazy">
+                        <div class="screenshot-caption">
+                            <h4>🐙 Works on GitHub</h4>
+                            <p>Automatically detects Mermaid diagrams in README files, issues, and pull requests</p>
+                        </div>
+                    </div>
+                    <div class="screenshot-item">
+                        <img src="screenshots/Screenshot2.png" alt="Beautiful diagram visualization modal" loading="lazy">
+                        <div class="screenshot-caption">
+                            <h4>🎨 Beautiful Visualization</h4>
+                            <p>Clean, professional diagram viewer with navigation and zoom controls</p>
+                        </div>
+                    </div>
+                </div>
                 <div class="demo-placeholder">
-                    🎥 Demo video coming soon<br>
-                    <small>Showing the extension in action on GitHub and Confluence</small>
+                    🎥 Full demo video available on our <a href="https://github.com/IstiN/mermaid_extensions" style="color: #ff3670;">GitHub repository</a>
                 </div>
             </section>
 
