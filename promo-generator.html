@@ -349,26 +349,52 @@
         // Load the real icon SVG
         async function loadRealIcon() {
             try {
-                const response = await fetch('shared/icon.svg');
-                const svgText = await response.text();
-                iconSvg = svgText;
+                // Try multiple sources for the icon
+                const iconSources = [
+                    'shared/icon.svg', // Local path
+                    'https://raw.githubusercontent.com/IstiN/mermaid_extensions/main/shared/icon.svg' // GitHub raw URL
+                ];
                 
-                // Create image from SVG for canvas use
-                const blob = new Blob([svgText], { type: 'image/svg+xml' });
-                const url = URL.createObjectURL(blob);
+                for (const iconPath of iconSources) {
+                    try {
+                        const response = await fetch(iconPath);
+                        if (response.ok) {
+                            const svgText = await response.text();
+                            iconSvg = svgText;
+                            
+                            // Create image from SVG for canvas use
+                            const blob = new Blob([svgText], { type: 'image/svg+xml' });
+                            const url = URL.createObjectURL(blob);
+                            
+                            iconImage = new Image();
+                            return new Promise((resolve) => {
+                                iconImage.onload = () => {
+                                    URL.revokeObjectURL(url);
+                                    console.log('✅ Icon loaded successfully from:', iconPath);
+                                    resolve();
+                                };
+                                iconImage.onerror = () => {
+                                    URL.revokeObjectURL(url);
+                                    console.warn('❌ Failed to create image from SVG');
+                                    resolve(); // Continue even if image creation fails
+                                };
+                                iconImage.src = url;
+                            });
+                        }
+                    } catch (fetchError) {
+                        console.warn(`Failed to fetch icon from ${iconPath}:`, fetchError);
+                        continue; // Try next source
+                    }
+                }
                 
-                iconImage = new Image();
-                return new Promise((resolve) => {
-                    iconImage.onload = () => {
-                        URL.revokeObjectURL(url);
-                        resolve();
-                    };
-                    iconImage.src = url;
-                });
+                // If all sources failed, create fallback
+                throw new Error('All icon sources failed');
+                
             } catch (error) {
-                console.error('Could not load icon:', error);
-                // Create fallback icon
+                console.error('Could not load icon from any source:', error);
+                // Create fallback icon and ensure Promise resolves
                 createFallbackIcon();
+                return Promise.resolve();
             }
         }
 
@@ -578,8 +604,14 @@
         // Automatically load our screenshots
         async function loadOurScreenshots() {
             const screenshotPaths = [
-                'screenshots/Screenshot1.png',
-                'screenshots/Screenshot2.png'
+                {
+                    local: 'screenshots/Screenshot1.png',
+                    remote: 'https://raw.githubusercontent.com/IstiN/mermaid_extensions/main/screenshots/Screenshot1.png'
+                },
+                {
+                    local: 'screenshots/Screenshot2.png', 
+                    remote: 'https://raw.githubusercontent.com/IstiN/mermaid_extensions/main/screenshots/Screenshot2.png'
+                }
             ];
             
             const grid = document.getElementById('screenshotGrid');
@@ -587,21 +619,39 @@
             
             try {
                 for (let i = 0; i < screenshotPaths.length; i++) {
-                    const path = screenshotPaths[i];
+                    const paths = screenshotPaths[i];
                     const img = new Image();
                     img.crossOrigin = 'anonymous';
                     
-                    await new Promise((resolve, reject) => {
-                        img.onload = () => {
-                            createScreenshotCanvas(img, `Screenshot${i + 1}.png`, i);
-                            resolve();
-                        };
-                        img.onerror = () => {
-                            console.warn(`Could not load ${path}`);
-                            resolve(); // Continue even if one fails
-                        };
-                        img.src = path;
-                    });
+                    // Try loading from local path first, then remote
+                    let loaded = false;
+                    
+                    for (const pathType of ['local', 'remote']) {
+                        if (loaded) break;
+                        
+                        try {
+                            await new Promise((resolve, reject) => {
+                                img.onload = () => {
+                                    createScreenshotCanvas(img, `Screenshot${i + 1}.png`, i);
+                                    console.log(`✅ Screenshot ${i + 1} loaded from ${pathType} path`);
+                                    loaded = true;
+                                    resolve();
+                                };
+                                img.onerror = () => {
+                                    console.warn(`❌ Could not load Screenshot${i + 1} from ${pathType}: ${paths[pathType]}`);
+                                    reject();
+                                };
+                                img.src = paths[pathType];
+                            });
+                        } catch (error) {
+                            // Try next path type
+                            continue;
+                        }
+                    }
+                    
+                    if (!loaded) {
+                        console.warn(`❌ Failed to load Screenshot${i + 1} from any source`);
+                    }
                 }
                 
                 if (grid.querySelector('.screenshot-item')) {
@@ -1197,20 +1247,45 @@
 
         // Initialize everything
         async function initializeAll() {
-            // Load our real icon first
-            await loadRealIcon();
-            
-            // Generate promotional materials with real icon
-            generatePromoTiles();
-            generateFavicon();
-            
-            // Load our screenshots automatically
-            loadOurScreenshots();
-            
-            // Initialize animation with first frame
-            generateAnimation();
-            
-            console.log('🎨 Promotional materials generator initialized with real assets!');
+            try {
+                console.log('🚀 Starting promotional materials generator initialization...');
+                
+                // Load our real icon first
+                console.log('📥 Loading icon...');
+                await loadRealIcon();
+                console.log('✅ Icon loading completed');
+                
+                // Generate promotional materials with real icon
+                console.log('🎨 Generating promotional tiles...');
+                generatePromoTiles();
+                console.log('✅ Promotional tiles generated');
+                
+                console.log('🎯 Generating favicon...');
+                generateFavicon();
+                console.log('✅ Favicon generated');
+                
+                // Load our screenshots automatically
+                console.log('📸 Loading screenshots...');
+                loadOurScreenshots();
+                
+                // Initialize animation with first frame
+                console.log('🎬 Initializing animation...');
+                generateAnimation();
+                console.log('✅ Animation initialized');
+                
+                console.log('🎉 Promotional materials generator fully initialized!');
+                
+                // Enable all buttons
+                const buttons = document.querySelectorAll('button, .download-link');
+                buttons.forEach(btn => {
+                    btn.style.opacity = '1';
+                    btn.style.pointerEvents = 'auto';
+                });
+                
+            } catch (error) {
+                console.error('❌ Error during initialization:', error);
+                alert('There was an error initializing the promotional materials generator. Please check the console for details.');
+            }
         }
 
         // Start initialization when page loads
