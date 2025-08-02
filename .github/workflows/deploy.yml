@@ -121,6 +121,7 @@ jobs:
         # Copy main website files
         cp index.html _site/
         cp promo-generator.html _site/
+        cp privacy-policy.html _site/
         cp chrome-store-description.md _site/
         cp -r chrome/icons _site/
         cp -r screenshots _site/
