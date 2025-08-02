@@ -342,6 +342,72 @@
         let currentFrame = 0;
         let isAnimating = false;
 
+        // Global variables for icon
+        let iconSvg = null;
+        let iconImage = null;
+
+        // Load the real icon SVG
+        async function loadRealIcon() {
+            try {
+                const response = await fetch('shared/icon.svg');
+                const svgText = await response.text();
+                iconSvg = svgText;
+                
+                // Create image from SVG for canvas use
+                const blob = new Blob([svgText], { type: 'image/svg+xml' });
+                const url = URL.createObjectURL(blob);
+                
+                iconImage = new Image();
+                return new Promise((resolve) => {
+                    iconImage.onload = () => {
+                        URL.revokeObjectURL(url);
+                        resolve();
+                    };
+                    iconImage.src = url;
+                });
+            } catch (error) {
+                console.error('Could not load icon:', error);
+                // Create fallback icon
+                createFallbackIcon();
+            }
+        }
+
+        function createFallbackIcon() {
+            const canvas = document.createElement('canvas');
+            canvas.width = 128;
+            canvas.height = 128;
+            const ctx = canvas.getContext('2d');
+            
+            // Draw our icon manually as fallback
+            ctx.fillStyle = '#ff3670';
+            ctx.fillRect(1, 1, 126, 126);
+            
+            // White diagram elements
+            ctx.fillStyle = 'white';
+            ctx.translate(64, 64);
+            
+            // Top square
+            ctx.fillRect(-15, -36, 30, 18);
+            // Middle squares
+            ctx.fillRect(-42, -9, 24, 18);
+            ctx.fillRect(-12, -9, 24, 18);
+            ctx.fillRect(18, -9, 24, 18);
+            // Bottom squares
+            ctx.fillRect(-32, 18, 22, 16);
+            ctx.fillRect(10, 18, 22, 16);
+            
+            // Lines
+            ctx.strokeStyle = 'white';
+            ctx.lineWidth = 4;
+            ctx.beginPath();
+            ctx.moveTo(0, -18);
+            ctx.lineTo(0, -9);
+            ctx.stroke();
+            
+            iconImage = new Image();
+            iconImage.src = canvas.toDataURL();
+        }
+
         // Generate promotional tiles
         function generatePromoTiles() {
             generateSmallPromo();
@@ -352,47 +418,42 @@
             const canvas = document.getElementById('smallPromoCanvas');
             const ctx = canvas.getContext('2d');
             
-            // Background gradient
+            // Professional gradient background (inspired by DMTools banner)
             const gradient = ctx.createLinearGradient(0, 0, 440, 280);
             gradient.addColorStop(0, '#667eea');
-            gradient.addColorStop(0.5, '#764ba2');
-            gradient.addColorStop(1, '#ff3670');
+            gradient.addColorStop(0.6, '#764ba2');
+            gradient.addColorStop(1, '#4facfe');
             
             ctx.fillStyle = gradient;
             ctx.fillRect(0, 0, 440, 280);
             
-            // Icon placeholder (will be replaced with actual icon)
-            ctx.fillStyle = '#ffffff';
-            ctx.fillRect(30, 30, 80, 80);
-            ctx.fillStyle = '#ff3670';
-            ctx.fillRect(40, 40, 60, 60);
+            // Draw real icon
+            if (iconImage) {
+                ctx.drawImage(iconImage, 30, 30, 80, 80);
+            }
             
-            // Title
+            // Professional typography
             ctx.fillStyle = '#ffffff';
-            ctx.font = 'bold 32px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif';
+            ctx.font = 'bold 36px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif';
             ctx.fillText('Mermaid', 130, 60);
             ctx.fillText('Visualizer', 130, 95);
             
-            // Subtitle
+            // Clean subtitle
+            ctx.font = '18px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif';
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
+            ctx.fillText('Transform code into beautiful diagrams', 30, 140);
+            
+            // Key features (no CTA button)
+            const features = [
+                '⚡ One-click visualization',
+                '🌐 Works on GitHub, Jira, Confluence', 
+                '🎨 Beautiful SVG rendering'
+            ];
             ctx.font = '16px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif';
             ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
-            ctx.fillText('Transform diagrams with one click', 30, 140);
-            
-            // Features
-            const features = ['✨ Works on GitHub, Jira, Confluence', '🎨 Beautiful SVG rendering', '🔗 Mermaid.live integration'];
-            ctx.font = '14px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif';
             features.forEach((feature, i) => {
-                ctx.fillText(feature, 30, 170 + i * 25);
+                ctx.fillText(feature, 30, 175 + i * 28);
             });
-            
-            // CTA
-            ctx.fillStyle = '#ffffff';
-            ctx.fillRect(280, 200, 140, 40);
-            ctx.fillStyle = '#ff3670';
-            ctx.font = 'bold 16px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif';
-            ctx.textAlign = 'center';
-            ctx.fillText('Add to Chrome', 350, 225);
-            ctx.textAlign = 'left';
         }
 
         function generateMarqueePromo() {
@@ -401,59 +462,57 @@
             canvas.height = 560;
             const ctx = canvas.getContext('2d');
             
-            // Background gradient
+            // Professional gradient background
             const gradient = ctx.createLinearGradient(0, 0, 1400, 560);
             gradient.addColorStop(0, '#667eea');
             gradient.addColorStop(0.3, '#764ba2');
-            gradient.addColorStop(0.7, '#ff3670');
-            gradient.addColorStop(1, '#ff6b9d');
+            gradient.addColorStop(0.7, '#4facfe');
+            gradient.addColorStop(1, '#00f2fe');
             
             ctx.fillStyle = gradient;
             ctx.fillRect(0, 0, 1400, 560);
             
-            // Large icon
+            // Large real icon
+            if (iconImage) {
+                ctx.drawImage(iconImage, 60, 60, 180, 180);
+            }
+            
+            // Professional main title
             ctx.fillStyle = '#ffffff';
-            ctx.fillRect(50, 50, 200, 200);
-            ctx.fillStyle = '#ff3670';
-            ctx.fillRect(70, 70, 160, 160);
+            ctx.font = 'bold 64px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif';
+            ctx.fillText('Mermaid Visualizer', 280, 110);
             
-            // Main title
-            ctx.fillStyle = '#ffffff';
-            ctx.font = 'bold 72px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif';
-            ctx.fillText('Mermaid Visualizer', 300, 120);
+            // Clean subtitle
+            ctx.font = '32px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif';
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
+            ctx.fillText('Transform Code into Beautiful Diagrams', 280, 160);
             
-            // Subtitle
-            ctx.font = '36px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif';
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
-            ctx.fillText('Transform Code into Beautiful Diagrams', 300, 180);
-            
-            // Features
+            // Professional feature list
             const features = [
                 '⚡ One-click visualization on any webpage',
-                '🌐 Works with GitHub, Confluence, Jira, GitLab',
+                '🌐 Universal compatibility with dev tools',
                 '🎨 Beautiful SVG rendering with zoom & pan',
                 '🔗 Direct integration with mermaid.live',
-                '📱 Mobile-friendly with pinch-to-zoom',
-                '🔒 Privacy-first - all processing happens locally'
+                '📱 Mobile-friendly with touch support',
+                '🔒 Privacy-first local processing'
             ];
             
-            ctx.font = '24px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif';
+            ctx.font = '22px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif';
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
             features.forEach((feature, i) => {
-                const x = (i % 2) * 600 + 300;
-                const y = 250 + Math.floor(i / 2) * 40;
+                const x = (i % 2) * 600 + 280;
+                const y = 230 + Math.floor(i / 2) * 45;
                 ctx.fillText(feature, x, y);
             });
             
-            // CTA
+            // Professional tagline (no CTA button)
+            ctx.font = 'bold 28px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif';
             ctx.fillStyle = '#ffffff';
-            ctx.fillRect(300, 450, 300, 80);
-            ctx.fillStyle = '#ff3670';
-            ctx.font = 'bold 32px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif';
             ctx.textAlign = 'center';
-            ctx.fillText('Add to Chrome', 450, 500);
+            ctx.fillText('The Developer\'s Choice for Diagram Visualization', 700, 480);
             ctx.textAlign = 'left';
             
-            // Version for display (scale down)
+            // Scale for display
             const displayCanvas = document.getElementById('marqueePromoCanvas');
             displayCanvas.style.width = '700px';
             displayCanvas.style.height = '280px';
@@ -482,6 +541,46 @@
 
         // Screenshot processing
         document.getElementById('fileInput').addEventListener('change', handleScreenshots);
+
+        // Automatically load our screenshots
+        async function loadOurScreenshots() {
+            const screenshotPaths = [
+                'screenshots/Screenshot1.png',
+                'screenshots/Screenshot2.png'
+            ];
+            
+            const grid = document.getElementById('screenshotGrid');
+            grid.innerHTML = '<p style="color: rgba(255, 255, 255, 0.8); text-align: center;">Loading our screenshots...</p>';
+            
+            try {
+                for (let i = 0; i < screenshotPaths.length; i++) {
+                    const path = screenshotPaths[i];
+                    const img = new Image();
+                    img.crossOrigin = 'anonymous';
+                    
+                    await new Promise((resolve, reject) => {
+                        img.onload = () => {
+                            createScreenshotCanvas(img, `Screenshot${i + 1}.png`, i);
+                            resolve();
+                        };
+                        img.onerror = () => {
+                            console.warn(`Could not load ${path}`);
+                            resolve(); // Continue even if one fails
+                        };
+                        img.src = path;
+                    });
+                }
+                
+                if (grid.querySelector('.screenshot-item')) {
+                    grid.querySelector('p').remove(); // Remove loading message
+                } else {
+                    grid.innerHTML = '<p style="color: rgba(255, 255, 255, 0.6); text-align: center;">Screenshots not found. Please upload manually using the upload area above.</p>';
+                }
+            } catch (error) {
+                console.error('Error loading screenshots:', error);
+                grid.innerHTML = '<p style="color: rgba(255, 255, 255, 0.6); text-align: center;">Could not load screenshots. Please upload manually.</p>';
+            }
+        }
 
         function handleScreenshots(event) {
             const files = event.target.files;
@@ -618,31 +717,36 @@
             const ctx = canvas.getContext('2d');
             const progress = document.getElementById('animationProgress');
             
-            // Update progress
-            const totalFrames = 300; // 10 seconds at 30fps
+            // Slower animation - 20 seconds total (600 frames at 30fps)
+            const totalFrames = 600;
             const progressPercent = (currentFrame / totalFrames) * 100;
             progress.style.width = progressPercent + '%';
             
-            // Clear canvas
-            ctx.fillStyle = '#1a1a1a';
+            // Professional gradient background
+            const gradient = ctx.createLinearGradient(0, 0, 1280, 720);
+            gradient.addColorStop(0, '#667eea');
+            gradient.addColorStop(0.5, '#764ba2');
+            gradient.addColorStop(1, '#4facfe');
+            
+            ctx.fillStyle = gradient;
             ctx.fillRect(0, 0, 1280, 720);
             
-            // Animation sequence based on current frame
-            if (currentFrame < 60) {
-                // Intro sequence
+            // Animation sequence based on current frame (much slower)
+            if (currentFrame < 150) {
+                // Intro sequence (5 seconds)
                 drawIntroFrame(ctx, currentFrame);
-            } else if (currentFrame < 120) {
-                // Show webpage
-                drawWebpageFrame(ctx, currentFrame - 60);
-            } else if (currentFrame < 180) {
-                // Show extension icon
-                drawExtensionFrame(ctx, currentFrame - 120);
-            } else if (currentFrame < 240) {
-                // Show diagram appearing
-                drawDiagramFrame(ctx, currentFrame - 180);
+            } else if (currentFrame < 300) {
+                // Show webpage (5 seconds)
+                drawWebpageFrame(ctx, currentFrame - 150);
+            } else if (currentFrame < 400) {
+                // Show extension icon (3.3 seconds)
+                drawExtensionFrame(ctx, currentFrame - 300);
+            } else if (currentFrame < 500) {
+                // Show diagram appearing (3.3 seconds)
+                drawDiagramFrame(ctx, currentFrame - 400);
             } else {
-                // End sequence
-                drawEndFrame(ctx, currentFrame - 240);
+                // End sequence (3.3 seconds)
+                drawEndFrame(ctx, currentFrame - 500);
             }
             
             currentFrame++;
@@ -654,135 +758,313 @@
         }
 
         function drawIntroFrame(ctx, frame) {
-            const alpha = Math.sin((frame / 60) * Math.PI);
+            // Much slower fade in over 5 seconds
+            const alpha = Math.min(1, frame / 60);
+            const scale = 0.8 + (alpha * 0.2); // Gentle scale animation
             
-            ctx.fillStyle = `rgba(255, 54, 112, ${alpha})`;
-            ctx.font = 'bold 48px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif';
+            ctx.save();
+            ctx.translate(640, 360);
+            ctx.scale(scale, scale);
+            
+            // Draw real icon if available
+            if (iconImage && frame > 30) {
+                const iconAlpha = Math.min(1, (frame - 30) / 60);
+                ctx.globalAlpha = iconAlpha;
+                ctx.drawImage(iconImage, -80, -120, 160, 160);
+                ctx.globalAlpha = 1;
+            }
+            
+            // Professional title
+            ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
+            ctx.font = 'bold 56px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif';
             ctx.textAlign = 'center';
-            ctx.fillText('🧜‍♀️ Mermaid Visualizer', 640, 300);
+            ctx.fillText('Mermaid Visualizer', 0, 80);
             
-            ctx.fillStyle = `rgba(255, 255, 255, ${alpha * 0.8})`;
-            ctx.font = '24px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif';
-            ctx.fillText('Transform diagrams with one click', 640, 350);
+            // Subtitle with better timing
+            if (frame > 45) {
+                const subtitleAlpha = Math.min(1, (frame - 45) / 60);
+                ctx.fillStyle = `rgba(255, 255, 255, ${subtitleAlpha * 0.9})`;
+                ctx.font = '28px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif';
+                ctx.fillText('Transform code into beautiful diagrams', 0, 130);
+            }
+            
+            ctx.restore();
         }
 
         function drawWebpageFrame(ctx, frame) {
-            // Simulate browser window
-            ctx.fillStyle = '#f5f5f5';
-            ctx.fillRect(100, 100, 1080, 520);
+            // Fade in the browser window slowly
+            const alpha = Math.min(1, frame / 90);
             
-            // Browser chrome
-            ctx.fillStyle = '#e0e0e0';
-            ctx.fillRect(100, 100, 1080, 40);
+            ctx.save();
+            ctx.globalAlpha = alpha;
+            
+            // Professional browser window
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(140, 120, 1000, 480);
+            
+            // Browser chrome with rounded corners
+            ctx.fillStyle = '#f8f9fa';
+            ctx.fillRect(140, 120, 1000, 50);
             
             // Address bar
             ctx.fillStyle = '#ffffff';
-            ctx.fillRect(200, 110, 800, 20);
+            ctx.fillRect(200, 135, 700, 20);
             
-            ctx.fillStyle = '#666666';
-            ctx.font = '12px monospace';
+            // URL text
+            ctx.fillStyle = '#495057';
+            ctx.font = '14px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif';
             ctx.textAlign = 'left';
-            ctx.fillText('https://github.com/user/project/README.md', 210, 125);
+            ctx.fillText('🐙 github.com/IstiN/awesome-project/README.md', 210, 148);
             
-            // Mermaid code
+            // Page title
             ctx.fillStyle = '#24292e';
-            ctx.font = '14px monospace';
-            const code = [
-                '```mermaid',
-                'graph TD',
-                '    A[Start] --> B{Decision}',
-                '    B -->|Yes| C[Process]',
-                '    B -->|No| D[End]',
-                '    C --> D',
-                '```'
-            ];
+            ctx.font = 'bold 24px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif';
+            ctx.fillText('📊 Project Documentation', 160, 210);
             
-            code.forEach((line, i) => {
-                ctx.fillText(line, 120, 180 + i * 20);
-            });
+            // Mermaid code block with better styling
+            if (frame > 60) {
+                const codeAlpha = Math.min(1, (frame - 60) / 60);
+                ctx.globalAlpha = alpha * codeAlpha;
+                
+                // Code block background
+                ctx.fillStyle = '#f6f8fa';
+                ctx.fillRect(160, 240, 800, 200);
+                
+                // Code text
+                ctx.fillStyle = '#24292e';
+                ctx.font = '16px "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace';
+                const code = [
+                    '```mermaid',
+                    'graph TD',
+                    '    A[Start Process] --> B{Make Decision}',
+                    '    B -->|Yes| C[Execute Action]',
+                    '    B -->|No| D[Alternative Path]',
+                    '    C --> E[Success]',
+                    '    D --> E',
+                    '```'
+                ];
+                
+                code.forEach((line, i) => {
+                    ctx.fillText(line, 180, 270 + i * 22);
+                });
+            }
+            
+            ctx.restore();
         }
 
         function drawExtensionFrame(ctx, frame) {
-            // Previous frame content
-            drawWebpageFrame(ctx, 60);
+            // Previous frame content (keep webpage visible)
+            drawWebpageFrame(ctx, 150);
             
-            // Highlight extension icon area
-            const pulse = Math.sin((frame / 30) * Math.PI * 2) * 0.3 + 0.7;
-            ctx.fillStyle = `rgba(255, 54, 112, ${pulse})`;
-            ctx.fillRect(1000, 50, 40, 40);
+            // Zoom animation to extension area
+            const zoomProgress = Math.min(1, frame / 60);
+            const zoomScale = 1 + (zoomProgress * 2);
             
-            // Extension icon
-            ctx.fillStyle = '#ffffff';
-            ctx.fillRect(1005, 55, 30, 30);
-            ctx.fillStyle = '#ff3670';
-            ctx.fillRect(1010, 60, 20, 20);
+            ctx.save();
+            
+            // Highlight extension icon area with smooth pulse
+            const pulse = Math.sin((frame / 20) * Math.PI) * 0.4 + 0.8;
+            
+            // Extension toolbar background
+            ctx.fillStyle = `rgba(248, 249, 250, ${pulse})`;
+            ctx.fillRect(950, 30, 200, 60);
+            
+            // Highlight glow around our icon
+            ctx.fillStyle = `rgba(255, 54, 112, ${pulse * 0.3})`;
+            ctx.fillRect(1040, 40, 50, 50);
+            
+            // Draw our real extension icon
+            if (iconImage && frame > 30) {
+                const iconAlpha = Math.min(1, (frame - 30) / 30);
+                ctx.globalAlpha = iconAlpha;
+                ctx.drawImage(iconImage, 1045, 45, 40, 40);
+                ctx.globalAlpha = 1;
+            }
+            
+            // Click indicator
+            if (frame > 60) {
+                const clickAlpha = Math.sin((frame - 60) / 10 * Math.PI) * 0.8;
+                ctx.fillStyle = `rgba(255, 255, 255, ${clickAlpha})`;
+                ctx.beginPath();
+                ctx.arc(1065, 65, 25, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Click text
+                ctx.fillStyle = `rgba(255, 54, 112, ${clickAlpha})`;
+                ctx.font = 'bold 16px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText('Click!', 1065, 110);
+            }
+            
+            ctx.restore();
         }
 
         function drawDiagramFrame(ctx, frame) {
-            // Show beautiful rendered diagram
+            // Modal appearance animation
+            const modalAlpha = Math.min(1, frame / 30);
+            
+            ctx.save();
+            ctx.globalAlpha = modalAlpha;
+            
+            // Modal backdrop
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
+            ctx.fillRect(0, 0, 1280, 720);
+            
+            // Modal window
             ctx.fillStyle = '#ffffff';
-            ctx.fillRect(200, 150, 880, 400);
+            ctx.fillRect(190, 100, 900, 520);
             
-            // Diagram title
+            // Modal header
+            ctx.fillStyle = '#f8f9fa';
+            ctx.fillRect(190, 100, 900, 60);
+            
+            // Modal title
             ctx.fillStyle = '#24292e';
-            ctx.font = 'bold 20px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif';
-            ctx.textAlign = 'center';
-            ctx.fillText('Beautiful Mermaid Diagram', 640, 180);
+            ctx.font = 'bold 24px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif';
+            ctx.textAlign = 'left';
+            ctx.fillText('🧜‍♀️ Mermaid Diagram Viewer', 210, 135);
             
-            // Animated diagram nodes
+            // Diagram area background
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(210, 180, 860, 420);
+            
+            ctx.restore();
+            
+            // Animated diagram nodes (appear one by one)
             const nodes = [
-                { x: 300, y: 250, text: 'Start' },
-                { x: 640, y: 250, text: 'Decision' },
-                { x: 500, y: 350, text: 'Process' },
-                { x: 780, y: 350, text: 'End' }
+                { x: 320, y: 280, text: 'Start Process', type: 'rect' },
+                { x: 640, y: 280, text: 'Decision', type: 'diamond' },
+                { x: 480, y: 400, text: 'Execute', type: 'rect' },
+                { x: 800, y: 400, text: 'Alternative', type: 'rect' },
+                { x: 640, y: 520, text: 'Success', type: 'rect' }
             ];
             
             nodes.forEach((node, i) => {
-                if (frame > i * 15) {
-                    // Node background
-                    ctx.fillStyle = '#ff3670';
-                    ctx.fillRect(node.x - 50, node.y - 20, 100, 40);
+                if (frame > i * 20 + 30) {
+                    const nodeAlpha = Math.min(1, (frame - (i * 20 + 30)) / 20);
+                    
+                    ctx.save();
+                    ctx.globalAlpha = nodeAlpha;
+                    
+                    if (node.type === 'diamond') {
+                        // Diamond shape for decision
+                        ctx.fillStyle = '#4facfe';
+                        ctx.beginPath();
+                        ctx.moveTo(node.x, node.y - 25);
+                        ctx.lineTo(node.x + 60, node.y);
+                        ctx.lineTo(node.x, node.y + 25);
+                        ctx.lineTo(node.x - 60, node.y);
+                        ctx.closePath();
+                        ctx.fill();
+                    } else {
+                        // Rectangle for process
+                        ctx.fillStyle = '#ff3670';
+                        ctx.fillRect(node.x - 50, node.y - 20, 100, 40);
+                    }
                     
                     // Node text
                     ctx.fillStyle = '#ffffff';
-                    ctx.font = '16px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif';
+                    ctx.font = 'bold 14px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif';
                     ctx.textAlign = 'center';
                     ctx.fillText(node.text, node.x, node.y + 5);
+                    
+                    ctx.restore();
                 }
             });
             
             // Animated connections
-            if (frame > 30) {
-                ctx.strokeStyle = '#ff3670';
-                ctx.lineWidth = 3;
-                ctx.beginPath();
-                ctx.moveTo(350, 250);
-                ctx.lineTo(590, 250);
-                ctx.stroke();
-                
-                ctx.beginPath();
-                ctx.moveTo(615, 270);
-                ctx.lineTo(525, 330);
-                ctx.stroke();
-                
-                ctx.beginPath();
-                ctx.moveTo(665, 270);
-                ctx.lineTo(755, 330);
-                ctx.stroke();
-            }
+            const connections = [
+                { from: 0, to: 1 },
+                { from: 1, to: 2 },
+                { from: 1, to: 3 },
+                { from: 2, to: 4 },
+                { from: 3, to: 4 }
+            ];
+            
+            connections.forEach((conn, i) => {
+                if (frame > (i + 2) * 20 + 50) {
+                    const fromNode = nodes[conn.from];
+                    const toNode = nodes[conn.to];
+                    
+                    ctx.strokeStyle = '#667eea';
+                    ctx.lineWidth = 3;
+                    ctx.beginPath();
+                    ctx.moveTo(fromNode.x, fromNode.y);
+                    ctx.lineTo(toNode.x, toNode.y);
+                    ctx.stroke();
+                }
+            });
         }
 
         function drawEndFrame(ctx, frame) {
-            const alpha = Math.sin((frame / 60) * Math.PI);
+            // Fade in slowly over 3.3 seconds
+            const alpha = Math.min(1, frame / 90);
+            const scale = 0.9 + (alpha * 0.1);
             
-            ctx.fillStyle = `rgba(255, 54, 112, ${alpha})`;
-            ctx.font = 'bold 36px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif';
+            ctx.save();
+            ctx.translate(640, 360);
+            ctx.scale(scale, scale);
+            
+            // Draw our icon if available
+            if (iconImage && frame > 30) {
+                const iconAlpha = Math.min(1, (frame - 30) / 60);
+                ctx.globalAlpha = iconAlpha;
+                ctx.drawImage(iconImage, -60, -120, 120, 120);
+                ctx.globalAlpha = 1;
+            }
+            
+            // Professional call to action
+            ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
+            ctx.font = 'bold 48px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif';
             ctx.textAlign = 'center';
-            ctx.fillText('Get Mermaid Visualizer Today!', 640, 300);
+            ctx.fillText('Experience the Future', 0, 40);
+            ctx.fillText('of Diagram Visualization', 0, 90);
             
-            ctx.fillStyle = `rgba(255, 255, 255, ${alpha * 0.8})`;
-            ctx.font = '20px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif';
-            ctx.fillText('Available on Chrome Web Store', 640, 350);
+            if (frame > 60) {
+                const subtitleAlpha = Math.min(1, (frame - 60) / 60);
+                ctx.fillStyle = `rgba(255, 255, 255, ${subtitleAlpha * 0.9})`;
+                ctx.font = '24px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif';
+                ctx.fillText('Transform your workflow today', 0, 140);
+                
+                // Professional features
+                const features = ['⚡ One-click visualization', '🌐 Universal compatibility', '🔒 Privacy-first design'];
+                ctx.font = '18px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif';
+                features.forEach((feature, i) => {
+                    ctx.fillText(feature, 0, 180 + i * 30);
+                });
+            }
+            
+            ctx.restore();
+        }
+
+        // Favicon generation using real icon
+        function generateFavicon() {
+            const canvas = document.getElementById('faviconCanvas');
+            const ctx = canvas.getContext('2d');
+            
+            // Clear canvas
+            ctx.clearRect(0, 0, 64, 64);
+            
+            if (iconImage) {
+                // Draw our real icon scaled to favicon size
+                ctx.drawImage(iconImage, 0, 0, 64, 64);
+            } else {
+                // Fallback if icon isn't loaded
+                ctx.fillStyle = '#ff3670';
+                ctx.fillRect(1, 1, 62, 62);
+                
+                ctx.fillStyle = 'white';
+                ctx.translate(32, 32);
+                ctx.scale(0.4, 0.4);
+                
+                // Simplified diagram elements
+                ctx.fillRect(-15, -36, 30, 18);
+                ctx.fillRect(-42, -9, 24, 18);
+                ctx.fillRect(-12, -9, 24, 18);
+                ctx.fillRect(18, -9, 24, 18);
+                ctx.fillRect(-32, 18, 22, 16);
+                ctx.fillRect(10, 18, 22, 16);
+            }
         }
 
         function exportAnimationFrames() {
@@ -880,9 +1162,26 @@
             processScreenshots(files);
         });
 
-        // Initialize
-        generatePromoTiles();
-        generateFavicon();
+        // Initialize everything
+        async function initializeAll() {
+            // Load our real icon first
+            await loadRealIcon();
+            
+            // Generate promotional materials with real icon
+            generatePromoTiles();
+            generateFavicon();
+            
+            // Load our screenshots automatically
+            loadOurScreenshots();
+            
+            // Initialize animation with first frame
+            generateAnimation();
+            
+            console.log('🎨 Promotional materials generator initialized with real assets!');
+        }
+
+        // Start initialization when page loads
+        initializeAll();
     </script>
 </body>
 </html>
