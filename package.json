@@ -17,7 +17,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/USER/mermaid_extensions.git"
+    "url": "git+https://github.com/IstiN/mermaid_extensions.git"
   },
   "keywords": [
     "mermaid",
@@ -36,9 +36,9 @@
   "author": "Your Name <your-email@example.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/USER/mermaid_extensions/issues"
+    "url": "https://github.com/IstiN/mermaid_extensions/issues"
   },
-  "homepage": "https://USER.github.io/mermaid_extensions",
+  "homepage": "https://IstiN.github.io/mermaid_extensions",
   "devDependencies": {},
   "dependencies": {},
   "engines": {

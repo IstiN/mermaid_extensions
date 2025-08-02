@@ -1,6 +1,6 @@
 # 🧜‍♀️ Mermaid Visualizer - Browser Extension
 
-[![Build and Deploy](https://github.com/USER/mermaid_extensions/actions/workflows/deploy.yml/badge.svg)](https://github.com/USER/mermaid_extensions/actions/workflows/deploy.yml)
+[![Build and Deploy](https://github.com/IstiN/mermaid_extensions/actions/workflows/deploy.yml/badge.svg)](https://github.com/IstiN/mermaid_extensions/actions/workflows/deploy.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 > **Transform Mermaid diagram code into beautiful visuals on any webpage with just one click!**
@@ -24,7 +24,7 @@
    - Click "Add to Chrome"
 
 2. **Manual Installation**
-   - Download the latest `mermaid-visualizer-chrome.zip` from [Releases](https://github.com/USER/mermaid_extensions/releases)
+   - Download the latest `mermaid-visualizer-chrome.zip` from [Releases](https://github.com/IstiN/mermaid_extensions/releases)
    - Go to `chrome://extensions/`
    - Enable "Developer mode" (top-right toggle)
    - Click "Load unpacked" and select the extracted folder
@@ -35,7 +35,7 @@
    - Click "Get"
 
 2. **Manual Installation**
-   - Download the latest `mermaid-visualizer-safari.zip` from [Releases](https://github.com/USER/mermaid_extensions/releases)
+   - Download the latest `mermaid-visualizer-safari.zip` from [Releases](https://github.com/IstiN/mermaid_extensions/releases)
    - Open Safari → Preferences → Extensions
    - Enable "Developer mode"
    - Load the extension
@@ -82,7 +82,7 @@ mermaid_extensions/
 ### Setup Development Environment
 ```bash
 # Clone the repository
-git clone https://github.com/USER/mermaid_extensions.git
+git clone https://github.com/IstiN/mermaid_extensions.git
 cd mermaid_extensions
 
 # The extension is ready to use - no build step required!
@@ -157,9 +157,9 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📞 Support
 
-- 🐛 **Bug reports**: [Create an issue](https://github.com/USER/mermaid_extensions/issues)
-- 💡 **Feature requests**: [Create an issue](https://github.com/USER/mermaid_extensions/issues)
-- 💬 **Questions**: [Start a discussion](https://github.com/USER/mermaid_extensions/discussions)
+- 🐛 **Bug reports**: [Create an issue](https://github.com/IstiN/mermaid_extensions/issues)
+- 💡 **Feature requests**: [Create an issue](https://github.com/IstiN/mermaid_extensions/issues)
+- 💬 **Questions**: [Start a discussion](https://github.com/IstiN/mermaid_extensions/discussions)
 - 📧 **Contact**: [Email us](mailto:your-email@example.com)
 
 ---
@@ -168,6 +168,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 **Made with ❤️ for the developer community**
 
-[🌐 Website](https://USER.github.io/mermaid_extensions) • [📦 Downloads](https://USER.github.io/mermaid_extensions/downloads.html) • [🚀 Releases](https://github.com/USER/mermaid_extensions/releases)
+[🌐 Website](https://IstiN.github.io/mermaid_extensions) • [📦 Downloads](https://IstiN.github.io/mermaid_extensions/downloads.html) • [🚀 Releases](https://github.com/IstiN/mermaid_extensions/releases)
 
 </div>
