@@ -1,0 +1,291 @@
+name: Build and Deploy Mermaid Extension
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y zip
+
+    - name: Verify extension structure
+      run: |
+        echo "📁 Checking extension structure..."
+        ls -la
+        ls -la chrome/
+        ls -la safari/
+        ls -la shared/
+
+    - name: Build Chrome extension package
+      run: |
+        echo "🌐 Building Chrome extension..."
+        mkdir -p dist
+        
+        # Create Chrome store package
+        cd chrome
+        zip -r ../dist/mermaid-visualizer-chrome.zip . -x "*.DS_Store" "node_modules/*" ".git/*"
+        cd ..
+        
+        echo "✅ Chrome package created: $(ls -lh dist/mermaid-visualizer-chrome.zip)"
+
+    - name: Build Safari extension package
+      run: |
+        echo "🦁 Building Safari extension..."
+        
+        # Create Safari store package
+        cd safari
+        zip -r ../dist/mermaid-visualizer-safari.zip . -x "*.DS_Store" "node_modules/*" ".git/*"
+        cd ..
+        
+        echo "✅ Safari package created: $(ls -lh dist/mermaid-visualizer-safari.zip)"
+
+    - name: Create development packages
+      run: |
+        echo "🛠️ Creating development packages..."
+        
+        # Full source package for developers
+        zip -r dist/mermaid-visualizer-source.zip . -x "*.git/*" "node_modules/*" "dist/*" "*.DS_Store"
+        
+        # Individual browser packages for sideloading
+        mkdir -p dist/unpacked
+        cp -r chrome dist/unpacked/chrome-unpacked
+        cp -r safari dist/unpacked/safari-unpacked
+        
+        echo "📦 Development packages created"
+        ls -la dist/
+
+    - name: Generate build info
+      run: |
+        echo "📋 Generating build information..."
+        cat > dist/build-info.json << EOF
+        {
+          "version": "1.0.0",
+          "build_date": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
+          "commit": "${{ github.sha }}",
+          "branch": "${{ github.ref_name }}",
+          "packages": {
+            "chrome": "mermaid-visualizer-chrome.zip",
+            "safari": "mermaid-visualizer-safari.zip",
+            "source": "mermaid-visualizer-source.zip"
+          }
+        }
+        EOF
+        cat dist/build-info.json
+
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: extension-packages
+        path: |
+          dist/*.zip
+          dist/build-info.json
+          dist/unpacked/
+        retention-days: 30
+
+    - name: Setup Pages
+      if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+      uses: actions/configure-pages@v4
+
+    - name: Prepare GitHub Pages content
+      if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+      run: |
+        echo "📄 Preparing GitHub Pages content..."
+        mkdir -p _site
+        
+        # Copy main website files
+        cp index.html _site/
+        cp -r chrome/icons _site/
+        cp -r shared _site/
+        
+        # Create downloads page
+        cat > _site/downloads.html << 'EOF'
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Downloads - Mermaid Visualizer</title>
+            <style>
+                body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; margin: 40px; }
+                .download-section { margin: 20px 0; padding: 20px; border: 2px solid #ff3670; border-radius: 10px; }
+                .download-btn { background: #ff3670; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; margin: 5px; display: inline-block; }
+                .download-btn:hover { background: #e02a5b; }
+            </style>
+        </head>
+        <body>
+            <h1>📦 Download Mermaid Visualizer</h1>
+            
+            <div class="download-section">
+                <h2>🌐 Chrome Extension</h2>
+                <p>For Google Chrome, Microsoft Edge, and other Chromium-based browsers</p>
+                <a href="#" class="download-btn">Chrome Web Store (Coming Soon)</a>
+                <a href="https://github.com/${{ github.repository }}/releases/latest/download/mermaid-visualizer-chrome.zip" class="download-btn">Download ZIP</a>
+            </div>
+            
+            <div class="download-section">
+                <h2>🦁 Safari Extension</h2>
+                <p>For Safari on macOS</p>
+                <a href="#" class="download-btn">Safari Extensions Gallery (Coming Soon)</a>
+                <a href="https://github.com/${{ github.repository }}/releases/latest/download/mermaid-visualizer-safari.zip" class="download-btn">Download ZIP</a>
+            </div>
+            
+            <div class="download-section">
+                <h2>🛠️ For Developers</h2>
+                <p>Source code and development builds</p>
+                <a href="https://github.com/${{ github.repository }}" class="download-btn">View on GitHub</a>
+                <a href="https://github.com/${{ github.repository }}/releases/latest/download/mermaid-visualizer-source.zip" class="download-btn">Source Code</a>
+            </div>
+            
+            <p><a href="index.html">← Back to Main Page</a></p>
+        </body>
+        </html>
+        EOF
+        
+        # Create API endpoint for latest version
+        mkdir -p _site/api
+        cp dist/build-info.json _site/api/version.json
+        
+        echo "✅ GitHub Pages content prepared"
+        ls -la _site/
+
+    - name: Upload Pages artifact
+      if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+      uses: actions/upload-pages-artifact@v3
+      with:
+        path: _site
+
+  deploy-pages:
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+    - name: Deploy to GitHub Pages
+      id: deployment
+      uses: actions/deploy-pages@v4
+
+  create-release:
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Download build artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: extension-packages
+        path: dist
+
+    - name: Get version info
+      id: version
+      run: |
+        VERSION="1.0.0-$(date +%Y%m%d)-$(echo ${{ github.sha }} | cut -c1-7)"
+        echo "version=$VERSION" >> $GITHUB_OUTPUT
+        echo "Version: $VERSION"
+
+    - name: Create Release
+      uses: softprops/action-gh-release@v1
+      with:
+        tag_name: v${{ steps.version.outputs.version }}
+        name: Mermaid Visualizer v${{ steps.version.outputs.version }}
+        body: |
+          🎉 **Mermaid Visualizer Extension Release**
+          
+          ## 📦 Downloads
+          
+          ### 🌐 Chrome Extension
+          - **For Chrome Web Store**: `mermaid-visualizer-chrome.zip`
+          - **For manual installation**: Download and load as unpacked extension
+          
+          ### 🦁 Safari Extension  
+          - **For Safari Extensions Gallery**: `mermaid-visualizer-safari.zip`
+          - **For manual installation**: Download and load in Safari
+          
+          ### 🛠️ Developer Resources
+          - **Full source code**: `mermaid-visualizer-source.zip`
+          - **Build information**: `build-info.json`
+          
+          ## ✨ Features
+          - ⚡ One-click Mermaid diagram visualization
+          - 🌐 Works on GitHub, Confluence, Jira, and any website
+          - 🎨 Beautiful SVG rendering with zoom and pan
+          - 🔗 Direct integration with mermaid.live
+          - 📱 Mobile-friendly with native browser zoom
+          - 🔒 Privacy-first - all processing happens locally
+          
+          ## 🚀 Installation
+          
+          ### Chrome/Edge/Chromium
+          1. Download `mermaid-visualizer-chrome.zip`
+          2. Go to `chrome://extensions/`
+          3. Enable "Developer mode"
+          4. Click "Load unpacked" and select the extracted folder
+          
+          ### Safari
+          1. Download `mermaid-visualizer-safari.zip`
+          2. Open Safari → Preferences → Extensions
+          3. Enable "Developer mode"
+          4. Load the extension
+          
+          ---
+          
+          **Commit:** ${{ github.sha }}
+          **Build Date:** $(date -u +%Y-%m-%dT%H:%M:%SZ)
+          
+          Made with ❤️ for the developer community
+        draft: false
+        prerelease: false
+        files: |
+          dist/*.zip
+          dist/build-info.json
+        token: ${{ secrets.GITHUB_TOKEN }}
+
+  notify:
+    if: always()
+    runs-on: ubuntu-latest
+    needs: [build, deploy-pages, create-release]
+    steps:
+    - name: Workflow Summary
+      run: |
+        echo "## 🎉 Mermaid Visualizer Build Complete" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### 📊 Build Results" >> $GITHUB_STEP_SUMMARY
+        echo "- **Build Status**: ${{ needs.build.result }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **Pages Deployment**: ${{ needs.deploy-pages.result }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **Release Creation**: ${{ needs.create-release.result }}" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### 🔗 Links" >> $GITHUB_STEP_SUMMARY
+        echo "- 🌐 **Website**: https://${{ github.repository_owner }}.github.io/mermaid_extensions" >> $GITHUB_STEP_SUMMARY
+        echo "- 📦 **Downloads**: https://${{ github.repository_owner }}.github.io/mermaid_extensions/downloads.html" >> $GITHUB_STEP_SUMMARY
+        echo "- 📋 **Releases**: https://github.com/${{ github.repository }}/releases" >> $GITHUB_STEP_SUMMARY
+        echo "- 📖 **Repository**: https://github.com/${{ github.repository }}" >> $GITHUB_STEP_SUMMARY

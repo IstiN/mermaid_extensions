@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="128" height="128" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Drop shadow -->
+    <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#000000" flood-opacity="0.15"/>
+    </filter>
+  </defs>
+  
+  <!-- Background square with rounded corners - mermaid pink color -->
+  <rect x="1" y="1" width="126" height="126" rx="25" ry="25" fill="#ff3670" filter="url(#shadow)"/>
+  
+  <!-- Central abstract symbol - connected squares diagram -->
+  <g transform="translate(64, 64)" fill="white">
+    
+    <!-- Top square node -->
+    <rect x="-15" y="-36" width="30" height="18" rx="3" ry="3" fill="white"/>
+    
+    <!-- Middle left square -->
+    <rect x="-42" y="-9" width="24" height="18" rx="3" ry="3" fill="white"/>
+    
+    <!-- Middle center square -->
+    <rect x="-12" y="-9" width="24" height="18" rx="3" ry="3" fill="white"/>
+    
+    <!-- Middle right square -->
+    <rect x="18" y="-9" width="24" height="18" rx="3" ry="3" fill="white"/>
+    
+    <!-- Bottom left square -->
+    <rect x="-32" y="18" width="22" height="16" rx="3" ry="3" fill="white"/>
+    
+    <!-- Bottom right square -->
+    <rect x="10" y="18" width="22" height="16" rx="3" ry="3" fill="white"/>
+    
+    <!-- Connecting lines (diagram flow) -->
+    <!-- From top to middle center -->
+    <line x1="0" y1="-18" x2="0" y2="-9" stroke="white" stroke-width="4"/>
+    
+    <!-- From middle center to left and right -->
+    <line x1="-12" y1="0" x2="-18" y2="0" stroke="white" stroke-width="4"/>
+    <line x1="12" y1="0" x2="18" y2="0" stroke="white" stroke-width="4"/>
+    
+    <!-- From middle left to bottom left -->
+    <line x1="-30" y1="9" x2="-21" y2="18" stroke="white" stroke-width="4"/>
+    
+    <!-- From middle right to bottom right -->
+    <line x1="30" y1="9" x2="21" y2="18" stroke="white" stroke-width="4"/>
+    
+    <!-- Connecting middle nodes horizontally -->
+    <line x1="-18" y1="0" x2="-12" y2="0" stroke="white" stroke-width="3"/>
+    <line x1="12" y1="0" x2="18" y2="0" stroke="white" stroke-width="3"/>
+    
+  </g>
+</svg>

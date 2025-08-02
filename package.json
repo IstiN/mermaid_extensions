@@ -1,0 +1,76 @@
+{
+  "name": "mermaid-visualizer-extension",
+  "version": "1.0.0",
+  "description": "Browser extension to visualize Mermaid diagrams on any webpage",
+  "main": "setup.js",
+  "scripts": {
+    "setup": "node setup.js",
+    "build": "npm run setup",
+    "test": "echo \"No tests specified yet\" && exit 0",
+    "lint": "echo \"No linting configured yet\" && exit 0",
+    "clean": "rm -rf chrome/shared chrome/popup safari/shared safari/popup dist _site",
+    "dev": "npm run setup && echo \"Extension ready for development loading\"",
+    "package": "npm run setup && npm run package:chrome && npm run package:safari",
+    "package:chrome": "cd chrome && zip -r ../dist/mermaid-visualizer-chrome.zip . -x '*.DS_Store'",
+    "package:safari": "cd safari && zip -r ../dist/mermaid-visualizer-safari.zip . -x '*.DS_Store'",
+    "serve": "python3 -m http.server 8000 || python -m SimpleHTTPServer 8000"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/USER/mermaid_extensions.git"
+  },
+  "keywords": [
+    "mermaid",
+    "diagrams",
+    "visualization",
+    "browser-extension",
+    "chrome-extension",
+    "safari-extension",
+    "github",
+    "confluence",
+    "jira",
+    "flowchart",
+    "sequence-diagram",
+    "gantt-chart"
+  ],
+  "author": "Your Name <your-email@example.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/USER/mermaid_extensions/issues"
+  },
+  "homepage": "https://USER.github.io/mermaid_extensions",
+  "devDependencies": {},
+  "dependencies": {},
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "browser_extensions": {
+    "chrome": {
+      "manifest_version": 3,
+      "min_version": "88.0",
+      "store_url": "https://chrome.google.com/webstore/detail/TBD"
+    },
+    "safari": {
+      "manifest_version": 2,
+      "min_version": "14.0",
+      "store_url": "https://apps.apple.com/app/TBD"
+    }
+  },
+  "features": [
+    "One-click Mermaid diagram visualization",
+    "Works on GitHub, Confluence, Jira, and any website",
+    "Beautiful SVG rendering with zoom and pan",
+    "Direct integration with mermaid.live",
+    "Privacy-first local processing",
+    "Multi-diagram navigation",
+    "Export capabilities"
+  ],
+  "supported_platforms": [
+    "GitHub",
+    "Confluence",
+    "Jira",
+    "GitLab",
+    "Documentation sites",
+    "Any website with Mermaid code"
+  ]
+}

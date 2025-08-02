@@ -1,0 +1,352 @@
+/**
+ * Shared styles for Mermaid Extensions
+ */
+
+/* Visualize Button Styles */
+.mermaid-ext-button {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  padding: 6px 12px !important;
+  background: #0366d6 !important;
+  color: white !important;
+  border: none !important;
+  border-radius: 6px !important;
+  font-size: 12px !important;
+  font-weight: 500 !important;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  text-decoration: none !important;
+  z-index: 1000 !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+  line-height: 1 !important;
+  white-space: nowrap !important;
+}
+
+.mermaid-ext-button:hover {
+  background: #0256cc !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15) !important;
+}
+
+.mermaid-ext-button:active {
+  transform: translateY(0) !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+}
+
+.mermaid-ext-button svg {
+  width: 16px !important;
+  height: 16px !important;
+  stroke: currentColor !important;
+  flex-shrink: 0 !important;
+}
+
+/* Modal Styles */
+.mermaid-visualizer-modal {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  z-index: 2147483647 !important; /* Maximum z-index */
+  display: none !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  transition: opacity 0.2s ease !important;
+  pointer-events: none !important;
+}
+
+.mermaid-visualizer-modal[style*="display: flex"] {
+  visibility: visible !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+}
+
+.mermaid-modal-backdrop {
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  background: rgba(0, 0, 0, 0.6) !important;
+  backdrop-filter: blur(4px) !important;
+}
+
+.mermaid-modal-content {
+  position: relative !important;
+  max-width: 90vw !important;
+  max-height: 90vh !important;
+  background: white !important;
+  border-radius: 12px !important;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+}
+
+.mermaid-modal-header {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  padding: 16px 20px !important;
+  background: #f8f9fa !important;
+  border-bottom: 1px solid #e1e4e8 !important;
+}
+
+.mermaid-modal-header h3 {
+  margin: 0 !important;
+  font-size: 18px !important;
+  font-weight: 600 !important;
+  color: #24292e !important;
+  flex: 1;
+}
+
+.mermaid-modal-navigation {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.mermaid-diagram-counter {
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  color: #586069 !important;
+  min-width: 60px;
+  text-align: center;
+}
+
+.mermaid-btn:disabled {
+  opacity: 0.5 !important;
+  cursor: not-allowed !important;
+  background: transparent !important;
+}
+
+.mermaid-modal-controls {
+  display: flex !important;
+  gap: 8px !important;
+}
+
+.mermaid-btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 36px !important;
+  height: 36px !important;
+  border: none !important;
+  border-radius: 6px !important;
+  background: white !important;
+  color: #586069 !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  padding: 0 !important;
+}
+
+.mermaid-btn:hover {
+  background: #f1f3f4 !important;
+  color: #24292e !important;
+}
+
+.mermaid-btn:active {
+  background: #e1e4e8 !important;
+}
+
+.mermaid-btn svg {
+  width: 16px !important;
+  height: 16px !important;
+  stroke: currentColor !important;
+}
+
+.mermaid-diagram-container {
+  padding: 20px !important;
+  overflow: auto !important;
+  flex: 1 !important;
+  min-height: 400px !important;
+  max-height: calc(90vh - 140px) !important;
+  display: flex !important;
+  align-items: flex-start !important;
+  justify-content: center !important;
+  background: white !important;
+  box-sizing: border-box !important;
+}
+
+.mermaid-diagram-container svg {
+  max-width: 100% !important;
+  height: auto !important;
+  display: block !important;
+  margin: 0 auto !important;
+}
+
+/* Error Styles */
+.mermaid-error {
+  padding: 20px !important;
+  background: #fff5f5 !important;
+  border: 1px solid #fed7d7 !important;
+  border-radius: 6px !important;
+  color: #742a2a !important;
+  max-width: 600px !important;
+}
+
+.mermaid-error h4 {
+  margin: 0 0 12px 0 !important;
+  color: #c53030 !important;
+  font-size: 16px !important;
+  font-weight: 600 !important;
+}
+
+.mermaid-error p {
+  margin: 0 0 16px 0 !important;
+  color: #742a2a !important;
+}
+
+.mermaid-error details {
+  margin-top: 16px !important;
+}
+
+.mermaid-error summary {
+  cursor: pointer !important;
+  font-weight: 500 !important;
+  margin-bottom: 8px !important;
+  color: #c53030 !important;
+}
+
+.mermaid-error pre {
+  background: #f7fafc !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 4px !important;
+  padding: 12px !important;
+  overflow-x: auto !important;
+  font-size: 12px !important;
+  color: #2d3748 !important;
+  margin: 0 !important;
+}
+
+.mermaid-error code {
+  background: none !important;
+  padding: 0 !important;
+  font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace !important;
+}
+
+/* Platform-specific adjustments */
+
+/* GitHub */
+body[data-color-mode] .mermaid-ext-button {
+  background: #238636 !important;
+}
+
+body[data-color-mode] .mermaid-ext-button:hover {
+  background: #2ea043 !important;
+}
+
+/* GitHub Dark Mode */
+body[data-color-mode="dark"] .mermaid-modal-content {
+  background: #21262d !important;
+  color: #f0f6fc !important;
+}
+
+body[data-color-mode="dark"] .mermaid-modal-header {
+  background: #161b22 !important;
+  border-bottom-color: #30363d !important;
+}
+
+body[data-color-mode="dark"] .mermaid-modal-header h3 {
+  color: #f0f6fc !important;
+}
+
+body[data-color-mode="dark"] .mermaid-btn {
+  background: #21262d !important;
+  color: #7d8590 !important;
+}
+
+body[data-color-mode="dark"] .mermaid-btn:hover {
+  background: #30363d !important;
+  color: #f0f6fc !important;
+}
+
+body[data-color-mode="dark"] .mermaid-diagram-container {
+  background: #21262d !important;
+}
+
+/* Confluence */
+.confluence-content .mermaid-ext-button {
+  background: #0052cc !important;
+}
+
+.confluence-content .mermaid-ext-button:hover {
+  background: #0065ff !important;
+}
+
+/* Jira */
+.jira-issue .mermaid-ext-button {
+  background: #0052cc !important;
+}
+
+.jira-issue .mermaid-ext-button:hover {
+  background: #0065ff !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .mermaid-modal-content {
+    max-width: 95vw !important;
+    max-height: 95vh !important;
+    margin: 16px !important;
+  }
+  
+  .mermaid-modal-header {
+    padding: 12px 16px !important;
+  }
+  
+  .mermaid-modal-header h3 {
+    font-size: 16px !important;
+  }
+  
+  .mermaid-diagram-container {
+    padding: 16px !important;
+  }
+  
+  .mermaid-ext-button {
+    font-size: 11px !important;
+    padding: 4px 8px !important;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .mermaid-ext-button {
+    border: 2px solid currentColor !important;
+  }
+  
+  .mermaid-modal-content {
+    border: 2px solid #000 !important;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .mermaid-ext-button,
+  .mermaid-btn {
+    transition: none !important;
+  }
+  
+  .mermaid-ext-button:hover {
+    transform: none !important;
+  }
+}
+
+/* Print styles */
+@media print {
+  .mermaid-visualizer-modal {
+    display: none !important;
+  }
+  
+  .mermaid-ext-button {
+    display: none !important;
+  }
+}

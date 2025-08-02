@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mermaid Visualizer</title>
+    <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+    <div class="popup-container">
+        <header class="popup-header">
+            <div class="logo">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+                <h1>Mermaid Visualizer</h1>
+            </div>
+            <div class="version">v1.0.0</div>
+        </header>
+
+        <main class="popup-content">
+            <div class="status-section">
+                <div class="status-indicator">
+                    <div class="status-dot" id="statusDot"></div>
+                    <span id="statusText">Checking...</span>
+                </div>
+                <div class="diagrams-count">
+                    <span id="diagramsFound">0</span> diagrams found on this page
+                </div>
+            </div>
+
+            <div class="controls-section">
+                <div class="setting-item">
+                    <label class="setting-label">
+                        <input type="checkbox" id="enabledToggle" class="setting-checkbox">
+                        <span class="setting-text">Enable extension</span>
+                    </label>
+                </div>
+
+                <div class="setting-item">
+                    <label class="setting-label">
+                        <input type="checkbox" id="autoDetectToggle" class="setting-checkbox">
+                        <span class="setting-text">Auto-detect diagrams</span>
+                    </label>
+                </div>
+
+                <div class="setting-item">
+                    <label class="setting-label">
+                        <span class="setting-text">Theme</span>
+                        <select id="themeSelect" class="setting-select">
+                            <option value="default">Default</option>
+                            <option value="dark">Dark</option>
+                            <option value="forest">Forest</option>
+                            <option value="neutral">Neutral</option>
+                        </select>
+                    </label>
+                </div>
+            </div>
+
+            <div class="actions-section">
+                <button id="scanButton" class="action-button primary">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                    Scan Page
+                </button>
+                
+                <button id="helpButton" class="action-button secondary">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"></path>
+                        <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                    </svg>
+                    Help
+                </button>
+            </div>
+
+            <div class="help-section" id="helpSection" style="display: none;">
+                <h3>How to use</h3>
+                <ul>
+                    <li>The extension automatically detects Mermaid diagrams on web pages</li>
+                    <li>Look for the blue "Visualize Mermaid" button near code blocks</li>
+                    <li>Click the button to view the rendered diagram</li>
+                    <li>Works on GitHub, Confluence, Jira, and other sites</li>
+                </ul>
+                
+                <h3>Supported platforms</h3>
+                <div class="platforms">
+                    <span class="platform-tag">GitHub</span>
+                    <span class="platform-tag">Confluence</span>
+                    <span class="platform-tag">Jira</span>
+                    <span class="platform-tag">Generic</span>
+                </div>
+
+                <h3>Keyboard shortcuts</h3>
+                <div class="shortcut">
+                    <kbd>Alt</kbd> + <kbd>M</kbd> - Toggle visualization
+                </div>
+            </div>
+        </main>
+
+        <footer class="popup-footer">
+            <div class="links">
+                <a href="https://mermaid.js.org/" target="_blank" rel="noopener">Mermaid Docs</a>
+                <a href="#" id="feedbackLink">Feedback</a>
+            </div>
+        </footer>
+    </div>
+
+    <script src="popup.js"></script>
+</body>
+</html>

@@ -1,0 +1,60 @@
+{
+  "manifest_version": 2,
+  "name": "Mermaid Visualizer",
+  "version": "1.0.0",
+  "description": "Easily visualize Mermaid diagrams found on web pages with a simple click. Works on GitHub, Confluence, Jira, and other sites.",
+  
+  "permissions": [
+    "activeTab",
+    "storage",
+    "https://*/*",
+    "http://*/*"
+  ],
+  
+  "content_scripts": [
+    {
+      "matches": [
+        "https://*/*",
+        "http://*/*"
+      ],
+              "js": [
+          "shared/pako.min.js",
+          "shared/mermaid.min.js",
+          "shared/mermaid-detector.js",
+          "shared/diagram-renderer.js",
+          "shared/content.js"
+        ],
+      "css": [
+        "shared/styles.css"
+      ],
+      "run_at": "document_idle"
+    }
+  ],
+  
+  "background": {
+    "scripts": ["background.js"],
+    "persistent": false
+  },
+  
+  "browser_action": {
+    "default_title": "Mermaid Visualizer",
+    "default_icon": {
+      "16": "icons/icon-16.png",
+      "48": "icons/icon-48.png",
+      "128": "icons/icon-128.png"
+    }
+  },
+  
+  "icons": {
+    "16": "icons/icon-16.png",
+    "48": "icons/icon-48.png",
+    "128": "icons/icon-128.png"
+  },
+  
+  "web_accessible_resources": [
+    "icons/*",
+    "shared/*"
+  ],
+  
+  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self';"
+}

@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mermaid Visualizer - Browser Extension</title>
+    <meta name="description" content="Convert Mermaid diagram code to visual diagrams on any webpage. Works with GitHub, Confluence, Jira, and more.">
+    <link rel="icon" type="image/png" href="shared/icon.svg">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+            line-height: 1.6;
+            color: #24292e;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        header {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 20px 0;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+
+        .logo img {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        h1 {
+            color: white;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin: 0;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .subtitle {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.2rem;
+            margin-top: 10px;
+        }
+
+        main {
+            padding: 60px 0;
+        }
+
+        .hero {
+            text-align: center;
+            margin-bottom: 80px;
+        }
+
+        .hero h2 {
+            color: white;
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .hero p {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.3rem;
+            max-width: 600px;
+            margin: 0 auto 40px;
+        }
+
+        .download-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 40px;
+        }
+
+        .download-btn {
+            background: linear-gradient(135deg, #ff3670, #ff6b9d);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            box-shadow: 0 4px 15px rgba(255, 54, 112, 0.4);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .download-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 54, 112, 0.6);
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 80px;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .feature-card h3 {
+            color: white;
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .feature-card p {
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.6;
+        }
+
+        .how-to-use {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 50px;
+            margin-bottom: 80px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .how-to-use h2 {
+            color: white;
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 40px;
+            font-weight: 700;
+        }
+
+        .steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+        }
+
+        .step {
+            text-align: center;
+        }
+
+        .step-number {
+            background: linear-gradient(135deg, #ff3670, #ff6b9d);
+            color: white;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 0 auto 20px;
+            box-shadow: 0 4px 15px rgba(255, 54, 112, 0.4);
+        }
+
+        .step h3 {
+            color: white;
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .step p {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .platforms {
+            text-align: center;
+            margin-bottom: 80px;
+        }
+
+        .platforms h2 {
+            color: white;
+            font-size: 2.5rem;
+            margin-bottom: 40px;
+            font-weight: 700;
+        }
+
+        .platform-list {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .platform-badge {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            font-weight: 500;
+        }
+
+        footer {
+            background: rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+            padding: 40px 0;
+            text-align: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        footer p {
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 20px;
+        }
+
+        .github-link {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .github-link:hover {
+            color: #ff3670;
+        }
+
+        .demo-video {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 30px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            margin-bottom: 80px;
+        }
+
+        .demo-video h2 {
+            color: white;
+            font-size: 2rem;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .demo-placeholder {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            padding: 60px 20px;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 1.1rem;
+            border: 2px dashed rgba(255, 255, 255, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+
+            .hero h2 {
+                font-size: 2rem;
+            }
+
+            .hero p {
+                font-size: 1.1rem;
+            }
+
+            .how-to-use {
+                padding: 30px 20px;
+            }
+
+            .download-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="logo">
+                <img src="chrome/icons/icon-128.png" alt="Mermaid Visualizer Icon">
+                <h1>Mermaid Visualizer</h1>
+            </div>
+            <p class="subtitle">Convert Mermaid diagrams to beautiful visuals on any webpage</p>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <section class="hero">
+                <h2>Transform Code into Diagrams</h2>
+                <p>Instantly visualize Mermaid diagram code found on GitHub, Confluence, Jira, and other websites. One click to see beautiful, interactive diagrams.</p>
+                
+                <div class="download-buttons">
+                    <a href="#" class="download-btn" id="chrome-download">
+                        🌐 Download for Chrome
+                    </a>
+                    <a href="#" class="download-btn" id="safari-download">
+                        🦁 Download for Safari
+                    </a>
+                </div>
+            </section>
+
+            <section class="features">
+                <div class="feature-card">
+                    <span class="feature-icon">⚡</span>
+                    <h3>One-Click Visualization</h3>
+                    <p>Click the extension icon to instantly find and visualize all Mermaid diagrams on the current page.</p>
+                </div>
+
+                <div class="feature-card">
+                    <span class="feature-icon">🌐</span>
+                    <h3>Universal Compatibility</h3>
+                    <p>Works on GitHub, Confluence, Jira, and any website containing Mermaid diagram code.</p>
+                </div>
+
+                <div class="feature-card">
+                    <span class="feature-icon">🎨</span>
+                    <h3>Beautiful Rendering</h3>
+                    <p>High-quality SVG diagrams with full zoom, pan, and export capabilities.</p>
+                </div>
+
+                <div class="feature-card">
+                    <span class="feature-icon">🔗</span>
+                    <h3>Mermaid.live Integration</h3>
+                    <p>Open diagrams directly in the official Mermaid.live editor for advanced editing.</p>
+                </div>
+
+                <div class="feature-card">
+                    <span class="feature-icon">📱</span>
+                    <h3>Mobile Friendly</h3>
+                    <p>Native browser zoom with pinch-to-zoom support for perfect mobile viewing.</p>
+                </div>
+
+                <div class="feature-card">
+                    <span class="feature-icon">🔒</span>
+                    <h3>Privacy First</h3>
+                    <p>All processing happens locally in your browser. No data is sent to external servers.</p>
+                </div>
+            </section>
+
+            <section class="how-to-use">
+                <h2>How to Use</h2>
+                <div class="steps">
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <h3>Install Extension</h3>
+                        <p>Download and install the extension for your browser from the Chrome Web Store or Safari Extensions Gallery.</p>
+                    </div>
+                    
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <h3>Visit Any Page</h3>
+                        <p>Navigate to any webpage containing Mermaid diagram code (GitHub, Confluence, Jira, documentation sites, etc.).</p>
+                    </div>
+                    
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <h3>Click Extension</h3>
+                        <p>Click the pink Mermaid Visualizer icon in your browser toolbar to detect and visualize all diagrams.</p>
+                    </div>
+                    
+                    <div class="step">
+                        <div class="step-number">4</div>
+                        <h3>Enjoy Diagrams</h3>
+                        <p>View beautiful, interactive diagrams with navigation, zoom, and export to mermaid.live.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="demo-video">
+                <h2>See It In Action</h2>
+                <div class="demo-placeholder">
+                    🎥 Demo video coming soon<br>
+                    <small>Showing the extension in action on GitHub and Confluence</small>
+                </div>
+            </section>
+
+            <section class="platforms">
+                <h2>Supported Platforms</h2>
+                <div class="platform-list">
+                    <span class="platform-badge">🐙 GitHub</span>
+                    <span class="platform-badge">📚 Confluence</span>
+                    <span class="platform-badge">🎯 Jira</span>
+                    <span class="platform-badge">📝 GitLab</span>
+                    <span class="platform-badge">📖 Documentation Sites</span>
+                    <span class="platform-badge">🌐 Any Website</span>
+                </div>
+                <p style="color: rgba(255, 255, 255, 0.8); margin-top: 20px;">
+                    Works anywhere Mermaid diagram code is displayed in text format
+                </p>
+            </section>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>Made with ❤️ for the developer community</p>
+            <a href="https://github.com/USER/mermaid_extensions" class="github-link">📖 View on GitHub</a>
+        </div>
+    </footer>
+
+    <script>
+        // Update download links when store links are available
+        document.getElementById('chrome-download').addEventListener('click', function(e) {
+            e.preventDefault();
+            alert('Chrome Web Store link will be available after publishing. For now, download from GitHub releases.');
+        });
+
+        document.getElementById('safari-download').addEventListener('click', function(e) {
+            e.preventDefault();
+            alert('Safari Extensions Gallery link will be available after publishing. For now, download from GitHub releases.');
+        });
+
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
